@@ -1,0 +1,104 @@
+USE AbdullinaPZ17;
+
+CREATE TABLE UserTypes (
+    user_type_id INT IDENTITY(1,1) PRIMARY KEY, 
+    name VARCHAR(100) NOT NULL
+);
+
+CREATE TABLE Users (
+    user_id INT IDENTITY(1,1) PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    phone VARCHAR(15) NOT NULL,
+    login VARCHAR(50) NOT NULL,
+    password VARCHAR(50) NOT NULL,
+    user_type_id INT, 
+    FOREIGN KEY (user_type_id) REFERENCES UserTypes(user_type_id)
+);
+
+CREATE TABLE TechTypes (
+    tech_type_id INT IDENTITY(1,1) PRIMARY KEY,
+    name VARCHAR(100) NOT NULL
+);
+
+CREATE TABLE RequestStatuses (
+    request_status_id INT IDENTITY(1,1) PRIMARY KEY,
+    name VARCHAR(100) NOT NULL
+);
+
+CREATE TABLE Requests (
+    request_id INT IDENTITY(1,1) PRIMARY KEY,
+    start_date DATE NOT NULL,
+    tech_type_id INT,  
+    tech_model VARCHAR(100) NOT NULL,
+    problem VARCHAR(150) NOT NULL,
+    request_status_id INT,  
+    complete_date DATE,
+    parts VARCHAR(100),
+    master_id INT,  
+    client_id INT,
+    FOREIGN KEY (tech_type_id) REFERENCES TechTypes(tech_type_id),
+    FOREIGN KEY (request_status_id) REFERENCES RequestStatuses(request_status_id),
+    FOREIGN KEY (master_id) REFERENCES Users(user_id),
+    FOREIGN KEY (client_id) REFERENCES Users(user_id)
+);
+
+CREATE TABLE Comments (
+    comment_id INT IDENTITY(1,1) PRIMARY KEY,
+    message VARCHAR(250) NOT NULL, 
+    master_id INT,  
+    request_id INT,  
+    FOREIGN KEY (master_id) REFERENCES Users(user_id),
+    FOREIGN KEY (request_id) REFERENCES Requests(request_id)
+);
+
+INSERT INTO UserTypes (name)
+VALUES
+('Менеджер'),
+('Мастер'),
+('Заказчик'),
+('Оператор');
+
+INSERT INTO Users (name, phone, login, password, user_type_id)
+VALUES
+('Трубин Никита Юрьевич', '89210563128', 'kasoo', 'root', 1),
+('Мурашов Андрей Юрьевич', '89535078985', 'murashov123', 'qwerty', 2),
+('Степанов Андрей Викторович', '89210673849', 'test1', 'test1', 2),
+('Перина Анастасия Денисовна', '89990563748', 'perinaAD', '250519', 4),
+('Мажитова Ксения Сергеевна', '89994563847', 'krutiha1234567', '1234567890', 4),
+('Семенова Ясмина Марковна', '89994563847', 'login1', 'pass1', 2),
+('Баранова Эмилия Марковна', '89994563841', 'login2', 'pass2', 3),
+('Егорова Алиса Платоновна', '89994563842', 'login3', 'pass3', 3),
+('Титов Максим Иванович', '89994563843', 'login4', 'pass4', 3),
+('Иванов Марк Максимович', '89994563844', 'login5', 'pass5', 2);
+
+INSERT INTO TechTypes (name)
+VALUES
+('Фен'),
+('Тостер'),
+('Холодильник'),
+('Стиральная машина'),
+('Мультиварка');
+
+INSERT INTO RequestStatuses (name)
+VALUES
+('Новая заявка'),
+('В процессе ремонта'),
+('Готова к выдаче');
+
+INSERT INTO Requests (start_date, tech_type_id, tech_model, problem, request_status_id, complete_date, parts, master_id, client_id)
+VALUES
+('2023-06-06', 1, 'Ладомир ТА112 белый', 'Перестал работать', 2, NULL, NULL, 2, 7),
+('2023-05-05', 2, 'Redmond RT-437 черный', 'Перестал работать', 2, NULL, NULL, 3, 7),
+('2022-07-07', 3, 'Indesit DS 316 W белый', 'Не морозит одна из камер холодильника', 3, '2023-01-01', NULL, 2, 8),
+('2023-08-02', 4, 'DEXP WM-F610NTMA/WW белый', 'Перестали работать многие режимы стирки', 1, NULL, NULL, NULL, 8),
+('2023-08-02', 5, 'Redmond RMC-M95 черный', 'Перестала включаться', 1, NULL, NULL, NULL, 9),
+('2023-08-02', 1, 'Ладомир ТА113 чёрный', 'Перестал работать', 3, '2023-08-03', NULL, 2, 7),
+('2023-07-09', 3, 'Indesit DS 314 W серый', 'Гудит, но не замораживает', 3, '2023-08-03', 'Мотор обдува морозильной камеры холодильника', 2, 8);
+
+INSERT INTO Comments (message, master_id, request_id)
+VALUES
+('Интересная поломка', 2, 1),
+('Очень странно, будем разбираться', 3, 2),
+('Скорее всего потребуется мотор обдува!', 2, 7),
+('Интересная проблема', 2, 1),
+('Очень странно, будем разбираться!', 3, 6);
